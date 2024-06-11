@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,64 +9,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter CheckBox All Checked'),
+    return const MaterialApp(
+      home: CheckboxExample(),
     );
   }
 }
 
-class CheckBoxModal {
-  String title;
-  bool value;
-  CheckBoxModal({
-    required this.title,
-    this.value = false,
-  });
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class CheckboxExample extends StatefulWidget {
+  const CheckboxExample({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _CheckboxExampleState createState() => _CheckboxExampleState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final allChecked = CheckBoxModal(title: 'all cheked');
-  final checkBoxList = [
-    CheckBoxModal(title: "CheckBox 1"),
-    CheckBoxModal(title: "CheckBox 2"),
-    CheckBoxModal(title: "CheckBox 3"),
-  ];
+class _CheckboxExampleState extends State<CheckboxExample> {
+  List<bool> items = List.generate(3, (index) => false);
+  bool isChecked = false;
+  bool isSelectedAll = false;
 
-  onAllClicked(CheckBoxModal ckbItem) {
-    final newValue = !ckbItem.value;
+  void countCheckBox() {
+    int selectedCount = items.where((item) => item).length;
+
     setState(() {
-      ckbItem.value = newValue;
-      for (var element in checkBoxList) {
-        element.value = newValue;
-      }
-    });
-  }
-
-  onItemCliked(CheckBoxModal ckbItem) {
-    final newValue = !ckbItem.value;
-    setState(() {
-      ckbItem.value = newValue;
-
-      if (!newValue) {
-        allChecked.value = false;
-      } else {
-        final allListChecked = checkBoxList.every((element) => element.value);
-        allChecked.value = allListChecked;
-      }
+      isChecked = selectedCount > 0;
+      isSelectedAll = selectedCount == items.length;
     });
   }
 
@@ -75,30 +40,39 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text('Checkbox Example'),
       ),
-      body: ListView(
+      body: Column(
         children: [
-          ListTile(
-            onTap: () => onAllClicked(allChecked),
-            leading: Checkbox(
-              value: allChecked.value,
-              onChanged: (value) => onAllClicked(allChecked),
-            ),
-            title: Text(allChecked.title),
+          Switch(
+            value: isSelectedAll,
+            onChanged: (value) {
+              var temp = List.generate(items.length, (index) => value);
+              setState(() {
+                isSelectedAll = value;
+                items = temp;
+              });
+              countCheckBox();
+            },
+            activeColor: Colors.blue,
+            activeTrackColor: Colors.lightBlueAccent,
           ),
-          const Divider(),
-          ...checkBoxList.map(
-            (item) => ListTile(
-              onTap: () => onItemCliked(item),
-              leading: Checkbox(
-                value: item.value,
-                onChanged: (value) => onItemCliked(item),
-              ),
-              title: Text(item.title),
+          Expanded(
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return Checkbox(
+                  value: items[index],
+                  onChanged: (value) {
+                    setState(() {
+                      items[index] = value!;
+                      countCheckBox();
+                    });
+                  },
+                );
+              },
             ),
-          )
+          ),
         ],
       ),
     );

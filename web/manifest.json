@@ -1,6 +1,6 @@
 {
-    "name": "flutter_checkbox_all",
-    "short_name": "flutter_checkbox_all",
+    "name": "flutter_checkbox",
+    "short_name": "flutter_checkbox",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

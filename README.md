@@ -1,4 +1,4 @@
-# flutter_checkbox_all
+# flutter_checkbox
 
 A new Flutter project.
 
